@@ -61,7 +61,6 @@ jobs:
    #      output-file: README.md
    #      output-method: inject
    #      git-push: "true"    
-
       
    # - name: apply terraforms
    #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
