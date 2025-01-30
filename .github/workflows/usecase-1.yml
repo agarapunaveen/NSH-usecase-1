@@ -42,7 +42,7 @@ jobs:
       aws-region: us-east-1
    - name: initialize terraform
      run: |
-      cd Infra/environment/${{ github.event.inputs.environment || 'dev' }} 
+      cd Infra/environments/${{ github.event.inputs.environment || 'dev' }} 
       terraform init
       # terraform plan -var-file="${{ github.event.inputs.environment || 'dev' }}.tfvars" -out=tfplan
    - name: plan terraform
