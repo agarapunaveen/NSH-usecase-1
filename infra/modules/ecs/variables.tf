@@ -7,7 +7,7 @@ variable "project_name" {
 variable "container_port" {
   description = "Port exposed by the container"
   type        = number
-  default     = 3000
+  default     = 3001
 }
 
 variable "container_cpu" {
@@ -35,11 +35,17 @@ variable "vpc_id" {
 variable "public_cidr_block" {
   default= ["10.0.1.0/24","10.0.2.0/24"]
 }
+variable "retention_in_days" {
+  default = 30
+}
 
 variable "execution_role_arn" {
   
 }
 variable "task_role_arn" {
+  
+}
+variable "private_subnet" {
   
 }
 variable "public_subnet" {

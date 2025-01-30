@@ -36,3 +36,40 @@ resource "aws_iam_role" "ecs_task_role" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "ecs_task_ecr_policy" {
+
+  name = "ecsTaskECRPullPolicy"
+
+  role = aws_iam_role.ecs_task_role.id
+ 
+  policy = jsonencode({
+
+    Version = "2012-10-17",
+
+    Statement = [
+
+      {
+
+        Effect   = "Allow"
+
+        Action   = [
+
+          "ecr:GetAuthorizationToken",
+
+          "ecr:BatchGetImage",
+
+          "ecr:BatchCheckLayerAvailability"
+
+        ]
+
+        Resource = "arn:aws:ecr:us-east-1:010928202531:repository/*"
+
+      }
+
+    ]
+
+  })
+
+}
+ 

@@ -16,5 +16,6 @@ module "ecs" {
   vpc_id = module.vpc.vpc_id
   execution_role_arn = module.iam.execution_role_arn
   task_role_arn = module.iam.task_role_arn
-  public_subnet=module.vpc.public_subnet
+  private_subnet = module.vpc.private_subnet
+  public_subnet = module.vpc.public_subnet
 }
