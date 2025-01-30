@@ -1,0 +1,50 @@
+name: terraform destroy
+run-name: terraform install
+on:
+ workflow_dispatch:
+  inputs:
+   environment:
+    description: 'please select the environments'
+    default: dev
+    required: true
+    type: choice
+    options:
+     - dev
+     - prod
+     - staging
+   
+jobs:
+ build-job:
+  runs-on: ubuntu-latest
+  environment: ${{ github.event.inputs.environment }}
+  steps:
+   - name: checkout
+     uses: actions/checkout@v4.2.2  
+     with:
+        token: ${{ secrets.TOKEN }}
+        ref: 'main'
+        # fetch-depth: 0
+   - name: set hashicorp  
+     uses: hashicorp/setup-terraform@v2.0.3
+     with:
+      terraform-version: 5.48.0
+   
+   - name: configue git
+     run: |
+      git config --global user.name 'agarapunaveen'
+      git config --global user.email 'agarapunaveen@gmail.com'
+   - name: configure AWS credential
+     uses: aws-actions/configure-aws-credentials@v4
+     with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+      aws-region: us-east-1
+   - name: initialize terraform
+     run: |
+      cd ./infra/environments/${{ github.event.inputs.environment || 'dev' }} 
+      terraform init
+      
+   - name: destroy terraform
+     run: |
+      cd ./infra/environments/dev
+      terraform destroy -var-file=${{ github.event.inputs.environment }}.tfvars -auto-approve
