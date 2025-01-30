@@ -1,0 +1,68 @@
+name: terraform initialization
+run-name: terraform install
+on:
+ workflow_dispatch:
+  inputs:
+   environment:
+    description: 'please select the environments'
+    default: dev
+    required: true
+    type: choice
+    options:
+     - dev
+     - prod
+     - staging
+   
+jobs:
+ build-job:
+  runs-on: ubuntu-latest
+  environment: ${{ github.event.inputs.environment }}
+  steps:
+   - name: checkout
+     uses: actions/checkout@v4.2.2  
+     with:
+        token: ${{ secrets.TOKEN }}
+        ref: 'main'
+        # fetch-depth: 0
+   - name: set hashicorp  
+     uses: hashicorp/setup-terraform@v2.0.3
+     with:
+      terraform-version: 5.48.0
+   
+   - name: configue git
+     run: |
+      git config --global user.name 'agarapunaveen'
+      git config --global user.email 'agarapunaveen@gmail.com'
+
+   - name: configure AWS credential
+     uses: aws-actions/configure-aws-credentials@v4
+     with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+      aws-region: us-east-1
+   - name: initialize terraform
+     run: |
+      cd Infra/Environments/${{ github.event.inputs.environment || 'dev' }} 
+      # terraform plan -var-file="${{ github.event.inputs.environment || 'dev' }}.tfvars" -out=tfplan
+   
+     
+   }
+   - name: plan terraform
+     run: terraform plan '-var-file=${{ github.event.inputs.environment }}.tfvars' '-out=tfplan' 
+
+   - name: apply terraform
+     run: terraform apply -var-file=${{ github.event.inputs.environment }}.tfvars -auto-approve
+     
+   # - name: Render terraform docs and push changes back to PR
+   #   if: ${{ github.event_name == 'pull_request' }}
+   #   uses: terraform-docs/gh-actions@main
+   #   with:
+   #      working-dir: .
+   #      output-file: README.md
+   #      output-method: inject
+   #      git-push: "true"    
+
+      
+   # - name: apply terraforms
+   #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+   #   run: terraform apply -auto-approve tfplan
