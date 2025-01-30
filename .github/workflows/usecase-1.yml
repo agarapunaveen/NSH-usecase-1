@@ -46,7 +46,7 @@ jobs:
       terraform init
       # terraform plan -var-file="${{ github.event.inputs.environment || 'dev' }}.tfvars" -out=tfplan
    - name: plan terraform
-     run: terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars" -out=tfplan
+     run: terraform plan '-var-file=${{ github.event.inputs.environment }}.tfvars' '-out=tfplan'
 
    - name: apply terraform
      run: terraform apply -var-file=${{ github.event.inputs.environment }}.tfvars -auto-approve
