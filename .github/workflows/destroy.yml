@@ -1,4 +1,4 @@
-name: terraform initialization
+name: terraform destroy
 run-name: terraform install
 on:
  workflow_dispatch:
